@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChilChat</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #222;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* APP */
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 270px;
+    background: #f7f7f8;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 8px;
+}
+
+.new-chat {
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+.new-chat:hover {
+    background: #eee;
+}
+
+.history {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.history-title {
+    font-size: 12px;
+    color: #777;
+    margin: 10px 8px;
+}
+
+.chat-item {
+    padding: 11px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-item:hover {
+    background: #e8e8e8;
+}
+
+.bottom {
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+}
+
+.profile {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #111;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.topbar {
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    justify-content: space-between;
+}
+
+.brand {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.menu-btn {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+/* CHAT */
+.chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 15%;
+}
+
+.welcome {
+    max-width: 700px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+.welcome h1 {
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.welcome p {
+    color: #777;
+}
+
+/* MESSAGES */
+.message {
+    display: flex;
+    margin-bottom: 25px;
+    gap: 12px;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.user .bubble {
+    background: #f1f1f1;
+    border-radius: 18px;
+}
+
+.message.bot .bubble {
+    background: transparent;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.bot-avatar {
+    background: #111;
+    color: white;
+}
+
+.user-avatar {
+    background: #ddd;
+}
+
+.bubble {
+    padding: 12px 16px;
+    line-height: 1.6;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+/* INPUT */
+.input-section {
+    padding: 15px 15%;
+}
+
+.input-box {
+    max-width: 850px;
+    margin: auto;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+
+.input-box textarea {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 10px;
+    height: 45px;
+    font-family: inherit;
+}
+
+.send-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: #111;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.send-btn:hover {
+    background: #333;
+}
+
+.footer {
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+    margin-top: 7px;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        height: 100vh;
+        z-index: 10;
+        transition: .3s;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .chat-area {
+        padding: 20px 12px;
+    }
+
+    .input-section {
+        padding: 10px;
+    }
+
+    .welcome {
+        margin: 80px auto;
+    }
+
+    .welcome h1 {
+        font-size: 28px;
+    }
+
+    .bubble {
+        max-width: 85%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+            💬 ChilChat
+        </div>
+
+        <button class="new-chat" onclick="newChat()">
+            ＋ New chat
+        </button>
+
+        <div class="history">
+            <div class="history-title">CHAT HISTORY</div>
+
+            <div id="historyList"></div>
+        </div>
+
+        <div class="bottom">
+            <div class="profile">
+                <div class="avatar">U</div>
+                <div>
+                    <b>User</b><br>
+                    <small>Free Plan</small>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <button class="menu-btn" onclick="toggleMenu()">
+                ☰
+            </button>
+
+            <div class="brand">
+                ChilChat
+            </div>
+
+            <div>
+                <button onclick="newChat()" style="
+                    border:none;
+                    background:none;
+                    cursor:pointer;
+                    font-size:18px;
+                ">
+                    ✨
+                </button>
+            </div>
+
+        </header>
+
+
+        <!-- CHAT AREA -->
+        <section class="chat-area" id="chatArea">
+
+            <div class="welcome" id="welcome">
+
+                <h1>How can I help you?</h1>
+
+                <p>
+                    Welcome to ChilChat — your AI chat assistant.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- INPUT -->
+        <section class="input-section">
+
+            <div class="input-box">
+
+                <textarea
+                    id="messageInput"
+                    placeholder="Message ChilChat..."
+                    onkeydown="handleKey(event)"
+                ></textarea>
+
+                <button class="send-btn" onclick="sendMessage()">
+                    ↑
+                </button>
+
+            </div>
+
+            <div class="footer">
+                ChilChat can make mistakes. Check important information.
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+/* VARIABLES */
+
+let chats = [];
+let currentChat = [];
+
+const chatArea = document.getElementById("chatArea");
+const input = document.getElementById("messageInput");
+const historyList = document.getElementById("historyList");
+
+
+/* SEND MESSAGE */
+
+function sendMessage() {
+
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    document.getElementById("welcome").style.display = "none";
+
+    addMessage("user", text);
+
+    currentChat.push({
+        role: "user",
+        text: text
+    });
+
+    input.value = "";
+
+    showTyping();
+
+    setTimeout(() => {
+
+        removeTyping();
+
+        const reply = generateReply(text);
+
+        addMessage("bot", reply);
+
+        currentChat.push({
+            role: "bot",
+            text: reply
+        });
+
+        saveChat(text);
+
+    }, 800);
+}
+
+
+/* ADD MESSAGE */
+
+function addMessage(type, text) {
+
+    const message = document.createElement("div");
+
+    message.className = "message " + type;
+
+    if (type === "user") {
+
+        message.innerHTML = `
+            <div class="bubble">
+                ${escapeHTML(text)}
+            </div>
+
+            <div class="message-avatar user-avatar">
+                U
+            </div>
+        `;
+
+    } else {
+
+        message.innerHTML = `
+            <div class="message-avatar bot-avatar">
+                C
+            </div>
+
+            <div class="bubble">
+                ${escapeHTML(text)}
+            </div>
+        `;
+
+    }
+
+    chatArea.appendChild(message);
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+
+/* DEMO AI RESPONSE */
+
+function generateReply(text) {
+
+    const lower = text.toLowerCase();
+
+    if (lower.includes("hello") ||
+        lower.includes("hi") ||
+        lower.includes("hey")) {
+
+        return "Hello! 👋 Main ChilChat hoon. Batao, main tumhari kya help kar sakta hoon?";
+
+    }
+
+    if (lower.includes("who are you") ||
+        lower.includes("tum kaun")) {
+
+        return "Main ChilChat ka AI assistant hoon. 🤖";
+
+    }
+
+    if (lower.includes("website")) {
+
+        return "Bilkul! Main tumhe website design, HTML, CSS aur JavaScript mein help kar sakta hoon.";
+
+    }
+
+    if (lower.includes("bitcoin")) {
+
+        return "Bitcoin ek decentralized cryptocurrency hai. Agar chaho to main Bitcoin ke basics simple Hinglish mein explain kar sakta hoon.";
+
+    }
+
+    if (lower.includes("thank")) {
+
+        return "You're welcome! 😊";
+
+    }
+
+    return "Samajh gaya. 👍 Ye abhi ChilChat ka demo AI response hai. Real AI answers ke liye backend/API connect karna hoga.";
+}
+
+
+/* TYPING */
+
+function showTyping() {
+
+    const typing = document.createElement("div");
+
+    typing.className = "message bot";
+    typing.id = "typing";
+
+    typing.innerHTML = `
+        <div class="message-avatar bot-avatar">C</div>
+        <div class="bubble">
+            <span>● ● ●</span>
+        </div>
+    `;
+
+    chatArea.appendChild(typing);
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+
+function removeTyping() {
+
+    const typing = document.getElementById("typing");
+
+    if (typing) {
+        typing.remove();
+    }
+}
+
+
+/* NEW CHAT */
+
+function newChat() {
+
+    currentChat = [];
+
+    chatArea.innerHTML = `
+        <div class="welcome" id="welcome">
+
+            <h1>How can I help you?</h1>
+
+            <p>
+                Welcome to ChilChat — your AI chat assistant.
+            </p>
+
+        </div>
+    `;
+
+    input.value = "";
+
+    closeMenu();
+}
+
+
+/* SAVE CHAT */
+
+function saveChat(firstMessage) {
+
+    if (currentChat.length === 1) {
+
+        const title =
+            firstMessage.length > 30
+            ? firstMessage.substring(0,30) + "..."
+            : firstMessage;
+
+        chats.unshift(title);
+
+        updateHistory();
+    }
+}
+
+
+/* HISTORY */
+
+function updateHistory() {
+
+    historyList.innerHTML = "";
+
+    chats.forEach((chat, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "chat-item";
+
+        item.innerHTML = "💬 " + escapeHTML(chat);
+
+        item.onclick = function() {
+            alert("Chat history demo: " + chat);
+        };
+
+        historyList.appendChild(item);
+
+    });
+}
+
+
+/* ENTER KEY */
+
+function handleKey(event) {
+
+    if (event.key === "Enter" && !event.shiftKey) {
+
+        event.preventDefault();
+
+        sendMessage();
+    }
+}
+
+
+/* MOBILE MENU */
+
+function toggleMenu() {
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+}
+
+
+function closeMenu() {
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
+}
+
+
+/* SECURITY */
+
+function escapeHTML(text) {
+
+    const div = document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
+
+</script>
+
+</body>
+</html>
