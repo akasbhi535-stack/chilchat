@@ -5,9 +5,9 @@ module.exports = async (req, res) => {
     });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.GEMINI_API_KEY) {
     return res.status(500).json({
-      error: "OPENAI_API_KEY is not configured"
+      error: "GEMINI_API_KEY is not configured"
     });
   }
 
@@ -20,34 +20,52 @@ module.exports = async (req, res) => {
       });
     }
 
-    const safeHistory = Array.isArray(history)
-      ? history.slice(-20).map((item) => ({
-          role: item.role === "bot" ? "assistant" : "user",
-          content: String(item.text || "")
-        }))
-      : [];
+    const contents = [];
 
-    const input = [
-      ...safeHistory,
-      {
-        role: "user",
-        content: message
-      }
-    ];
+    if (Array.isArray(history)) {
+      history.slice(-20).forEach((item) => {
+        const text = String(item.text || "");
+
+        if (!text) return;
+
+        contents.push({
+          role: item.role === "bot" ? "model" : "user",
+          parts: [
+            {
+              text: text
+            }
+          ]
+        });
+      });
+    }
+
+    contents.push({
+      role: "user",
+      parts: [
+        {
+          text: message
+        }
+      ]
+    });
 
     const response = await fetch(
-      "https://api.openai.com/v1/responses",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+          "x-goog-api-key": process.env.GEMINI_API_KEY
         },
         body: JSON.stringify({
-          model: "gpt-5",
-          instructions:
-            "You are ChilChat, a helpful AI assistant. Answer naturally and clearly. If the user speaks Hindi or Hinglish, reply in simple Hinglish.",
-          input
+          systemInstruction: {
+            parts: [
+              {
+                text:
+                  "You are ChilChat, a helpful AI assistant. Answer naturally and clearly. If the user speaks Hindi or Hinglish, reply in simple Hinglish."
+              }
+            ]
+          },
+          contents: contents
         })
       }
     );
@@ -56,14 +74,22 @@ module.exports = async (req, res) => {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data?.error?.message || "OpenAI request failed"
+        error:
+          data?.error?.message ||
+          "Gemini request failed"
       });
     }
 
+    const reply =
+      data?.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || "")
+        .join("")
+        .trim();
+
     return res.status(200).json({
       reply:
-        data.output_text ||
-        "Sorry, I could not generate a response."
+        reply ||
+        "Sorry 😕 Main abhi response generate nahi kar pa raha."
     });
 
   } catch (error) {
@@ -72,3 +98,4 @@ module.exports = async (req, res) => {
     });
   }
 };
+
