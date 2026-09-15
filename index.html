@@ -705,3 +705,550 @@
       }
 
       .
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChilChat AI</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#fff;
+  --text:#111;
+  --soft:#f1f1f1;
+  --border:#ddd;
+}
+
+body.dark{
+  --bg:#151515;
+  --text:#fff;
+  --soft:#292929;
+  --border:#444;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+}
+
+.app{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  height:70px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.logo{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  font-weight:bold;
+}
+
+.title{
+  font-size:24px;
+  font-weight:bold;
+}
+
+.actions{
+  margin-left:auto;
+  display:flex;
+  gap:8px;
+}
+
+.actions button{
+  border:1px solid var(--border);
+  background:var(--soft);
+  color:var(--text);
+  border-radius:10px;
+  padding:8px 10px;
+  cursor:pointer;
+}
+
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 12px 120px;
+}
+
+.welcome{
+  text-align:center;
+  margin-top:20vh;
+}
+
+.welcome h1{
+  font-size:34px;
+  margin-bottom:8px;
+}
+
+.welcome p{
+  opacity:.65;
+}
+
+.row{
+  display:flex;
+  gap:9px;
+  margin-bottom:20px;
+  align-items:flex-start;
+}
+
+.row.user{
+  justify-content:flex-end;
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  min-width:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+
+.botAvatar{
+  background:var(--soft);
+}
+
+.userAvatar{
+  background:#111;
+  color:#fff;
+  order:2;
+}
+
+.messageBox{
+  max-width:80%;
+}
+
+.bubble{
+  padding:12px 15px;
+  border-radius:17px;
+  white-space:pre-wrap;
+  line-height:1.55;
+  overflow-wrap:anywhere;
+}
+
+.botBubble{
+  background:var(--soft);
+}
+
+.userBubble{
+  background:#111;
+  color:#fff;
+}
+
+.tools{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+
+.tools button{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  opacity:.6;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.inputArea{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:10px 12px 16px;
+  background:var(--bg);
+}
+
+.inputBox{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px 8px 16px;
+  border:1px solid var(--border);
+  border-radius:30px;
+  background:var(--bg);
+}
+
+#input{
+  flex:1;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--text);
+  font-size:16px;
+}
+
+#send{
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  font-size:23px;
+  cursor:pointer;
+}
+
+#send:disabled{
+  opacity:.5;
+}
+
+.typing{
+  opacity:.6;
+  font-style:italic;
+}
+
+@media(max-width:600px){
+  .title{font-size:22px}
+  .actions button{padding:7px}
+  .bubble{max-width:85%}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">C</div>
+  <div class="title">ChilChat</div>
+
+  <div class="actions">
+    <button onclick="toggleTheme()">🌙</button>
+    <button onclick="clearChat()">🗑️</button>
+  </div>
+</header>
+
+<main class="chat" id="chat">
+
+  <div class="welcome" id="welcome">
+    <h1>ChilChat 🤖</h1>
+    <p>Your friendly AI assistant</p>
+  </div>
+
+</main>
+
+<div class="inputArea">
+  <div class="inputBox">
+
+    <input
+      id="input"
+      type="text"
+      placeholder="Message ChilChat..."
+      autocomplete="off"
+    >
+
+    <button id="send">↑</button>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+const send=document.getElementById("send");
+const welcome=document.getElementById("welcome");
+
+let history=[];
+let lastQuestion="";
+let busy=false;
+
+
+// Load saved chat
+try{
+  const saved=localStorage.getItem("chilchat_history");
+
+  if(saved){
+    history=JSON.parse(saved);
+
+    history.forEach(m=>{
+      addMessage(m.text,m.role,false);
+    });
+  }
+}catch(e){
+  history=[];
+}
+
+
+// Save chat
+function saveHistory(){
+  localStorage.setItem(
+    "chilchat_history",
+    JSON.stringify(history.slice(-40))
+  );
+}
+
+
+// Add message
+function addMessage(text,role,showTools=true){
+
+  welcome.style.display="none";
+
+  const row=document.createElement("div");
+  row.className="row "+role;
+
+  const avatar=document.createElement("div");
+  avatar.className=
+    "avatar "+
+    (role==="user"?"userAvatar":"botAvatar");
+
+  avatar.textContent=
+    role==="user"?"U":"C";
+
+  const box=document.createElement("div");
+  box.className="messageBox";
+
+  const bubble=document.createElement("div");
+
+  bubble.className=
+    "bubble "+
+    (role==="user"?"userBubble":"botBubble");
+
+  bubble.textContent=text;
+
+  box.appendChild(bubble);
+
+  if(role==="bot" && showTools){
+
+    const tools=document.createElement("div");
+    tools.className="tools";
+
+    const copy=document.createElement("button");
+    copy.textContent="📋 Copy";
+
+    copy.onclick=()=>{
+      navigator.clipboard.writeText(text);
+      copy.textContent="✅ Copied";
+
+      setTimeout(()=>{
+        copy.textContent="📋 Copy";
+      },1500);
+    };
+
+    tools.appendChild(copy);
+
+    box.appendChild(tools);
+  }
+
+  row.appendChild(avatar);
+  row.appendChild(box);
+
+  chat.appendChild(row);
+
+  chat.scrollTop=chat.scrollHeight;
+
+  return row;
+}
+
+
+// Send message
+async function sendMessage(){
+
+  if(busy)return;
+
+  const message=input.value.trim();
+
+  if(!message)return;
+
+  busy=true;
+  send.disabled=true;
+  input.disabled=true;
+
+  lastQuestion=message;
+
+  addMessage(message,"user");
+
+  input.value="";
+
+  const loading=addMessage(
+    "ChilChat is thinking... 🤔",
+    "bot",
+    false
+  );
+
+  loading.querySelector(".bubble")
+    .classList.add("typing");
+
+
+  try{
+
+    const response=await fetch("/api/chat",{
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        message:message,
+        history:history
+      })
+    });
+
+
+    const text=await response.text();
+
+    let data={};
+
+    try{
+      data=JSON.parse(text);
+    }catch{
+      throw new Error(
+        "Server ne JSON response nahi diya."
+      );
+    }
+
+
+    loading.remove();
+
+
+    if(!response.ok){
+      throw new Error(
+        data.error ||
+        "Server error "+response.status
+      );
+    }
+
+
+    if(!data.reply){
+      throw new Error(
+        "AI response nahi mila."
+      );
+    }
+
+
+    addMessage(
+      data.reply,
+      "bot"
+    );
+
+
+    history.push({
+      role:"user",
+      text:message
+    });
+
+    history.push({
+      role:"bot",
+      text:data.reply
+    });
+
+    saveHistory();
+
+
+  }catch(error){
+
+    loading.remove();
+
+    addMessage(
+      "Sorry 😕\n\n"+
+      error.message,
+      "bot"
+    );
+
+  }
+
+
+  busy=false;
+  send.disabled=false;
+  input.disabled=false;
+  input.focus();
+}
+
+
+// Clear chat
+function clearChat(){
+
+  if(!confirm("Puri chat delete karni hai?")){
+    return;
+  }
+
+  history=[];
+
+  localStorage.removeItem(
+    "chilchat_history"
+  );
+
+  chat.innerHTML="";
+
+  chat.appendChild(welcome);
+
+  welcome.style.display="block";
+}
+
+
+// Theme
+function toggleTheme(){
+
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "chilchat_theme",
+    document.body.classList.contains("dark")
+      ?"dark"
+      :"light"
+  );
+}
+
+
+// Load theme
+if(
+  localStorage.getItem("chilchat_theme")
+  ==="dark"
+){
+  document.body.classList.add("dark");
+}
+
+
+// Enter
+input.addEventListener(
+  "keydown",
+  e=>{
+    if(e.key==="Enter"){
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+);
+
+
+// Send button
+send.addEventListener(
+  "click",
+  sendMessage
+);
+
+input.focus();
+
+</script>
+
+</body>
+</html>
