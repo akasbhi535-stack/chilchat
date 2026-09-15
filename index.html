@@ -1,667 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChilChat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+  <title>ChilChat - AI Assistant</title>
 
-body{
-    font-family:Arial,sans-serif;
-    background:#fff;
-    color:#222;
-    height:100vh;
-    overflow:hidden;
-}
-
-.app{
-    display:flex;
-    height:100vh;
-}
-
-.sidebar{
-    width:260px;
-    background:#f7f7f8;
-    border-right:1px solid #ddd;
-    padding:15px;
-    display:flex;
-    flex-direction:column;
-}
-
-.logo{
-    font-size:22px;
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
-.new-chat{
-    width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    background:white;
-    cursor:pointer;
-    font-size:15px;
-    text-align:left;
-}
-
-.history-title{
-    margin-top:25px;
-    font-size:12px;
-    color:#777;
-    font-weight:bold;
-}
-
-.history{
-    margin-top:10px;
-    overflow-y:auto;
-}
-
-.history-item{
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:5px;
-    cursor:pointer;
-}
-
-.history-item:hover{
-    background:#e9e9e9;
-}
-
-.main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-}
-
-.header{
-    height:60px;
-    border-bottom:1px solid #eee;
-    display:flex;
-    align-items:center;
-    padding:0 20px;
-    font-size:18px;
-    font-weight:bold;
-}
-
-.menu{
-    display:none;
-    margin-right:15px;
-    font-size:24px;
-    cursor:pointer;
-}
-
-.chat-area{
-    flex:1;
-    overflow-y:auto;
-    padding:25px;
-}
-
-.welcome{
-    text-align:center;
-    margin-top:18vh;
-}
-
-.welcome h1{
-    font-size:32px;
-    margin-bottom:10px;
-}
-
-.welcome p{
-    color:#777;
-}
-
-.message{
-    max-width:800px;
-    margin:0 auto 20px;
-    display:flex;
-    gap:12px;
-}
-
-.avatar{
-    width:32px;
-    height:32px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eee;
-    flex-shrink:0;
-    font-weight:bold;
-}
-
-.message-content{
-    flex:1;
-    line-height:1.6;
-    white-space:pre-wrap;
-    word-break:break-word;
-}
-
-.user .avatar{
-    background:#222;
-    color:white;
-}
-
-.bot .avatar{
-    background:#e8e8e8;
-}
-
-.input-area{
-    padding:15px 20px 20px;
-    border-top:1px solid #eee;
-}
-
-.input-box{
-    max-width:800px;
-    margin:auto;
-    display:flex;
-    gap:10px;
-    border:1px solid #ccc;
-    border-radius:14px;
-    padding:8px;
-    background:white;
-}
-
-textarea{
-    flex:1;
-    border:none;
-    outline:none;
-    resize:none;
-    font-size:16px;
-    padding:10px;
-    min-height:45px;
-    max-height:150px;
-}
-
-.send{
-    width:45px;
-    height:45px;
-    border:none;
-    border-radius:10px;
-    background:#222;
-    color:white;
-    cursor:pointer;
-    font-size:20px;
-}
-
-.send:disabled{
-    opacity:.5;
-}
-
-.disclaimer{
-    text-align:center;
-    color:#888;
-    font-size:11px;
-    margin-top:8px;
-}
-
-.typing{
-    color:#777;
-    font-style:italic;
-}
-
-@media(max-width:700px){
-    .sidebar{
-        position:fixed;
-        left:-270px;
-        top:0;
-        bottom:0;
-        z-index:10;
-        transition:.2s;
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .sidebar.open{
-        left:0;
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .menu{
-        display:block;
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: white;
     }
 
-    .chat-area{
-        padding:15px;
+    /* Header */
+    .header {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 18px;
+      border-bottom: 1px solid #e5e5e5;
+      background: white;
     }
 
-    .input-area{
-        padding:10px;
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
     }
 
-    .welcome h1{
-        font-size:26px;
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #111;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
     }
-}
-</style>
+
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: #777;
+    }
+
+    /* Chat */
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px 110px;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 18px;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .bot-avatar {
+      background: #e9e9e9;
+      color: #333;
+    }
+
+    .user-avatar {
+      background: #111;
+      color: white;
+      order: 2;
+    }
+
+    .bubble {
+      max-width: 78%;
+      padding: 12px 15px;
+      border-radius: 16px;
+      line-height: 1.5;
+      font-size: 15px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .bot-bubble {
+      background: #f0f0f0;
+      color: #222;
+      border-top-left-radius: 5px;
+    }
+
+    .user-bubble {
+      background: #111;
+      color: white;
+      border-top-right-radius: 5px;
+    }
+
+    /* Input */
+    .input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      background: linear-gradient(
+        transparent,
+        white 25%
+      );
+    }
+
+    .input-box {
+      max-width: 900px;
+      margin: auto;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 8px 16px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      background: white;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    #messageInput {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: transparent;
+      min-width: 0;
+    }
+
+    #sendButton {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: #111;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    #sendButton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .empty {
+      text-align: center;
+      margin-top: 25vh;
+      color: #777;
+    }
+
+    .empty h1 {
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .bubble {
+        max-width: 82%;
+      }
+
+      .status {
+        display: none;
+      }
+
+      .chat {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="app">
 
-    <aside class="sidebar" id="sidebar">
-        <div class="logo">💬 ChilChat</div>
+  <!-- Header -->
+  <header class="header">
+    <div class="menu">☰</div>
 
-        <button class="new-chat" onclick="newChat()">
-            ＋ New chat
-        </button>
+    <div class="logo">C</div>
 
-        <div class="history-title">CHAT HISTORY</div>
+    <div class="title">ChilChat</div>
 
-        <div class="history" id="historyList"></div>
-    </aside>
+    <div class="status" id="status">
+      AI Online
+    </div>
+  </header>
 
-    <main class="main">
 
-        <div class="header">
-            <div class="menu" onclick="toggleMenu()">☰</div>
-            <span>ChilChat</span>
-        </div>
+  <!-- Chat -->
+  <main class="chat" id="chat">
 
-        <div class="chat-area" id="chatArea">
+    <div class="empty" id="empty">
+      <h1>ChilChat</h1>
+      <p>Ask me anything 🤖</p>
+    </div>
 
-            <div class="welcome" id="welcome">
-                <h1>✨ ChilChat</h1>
-                <p>How can I help you today?</p>
-            </div>
+  </main>
 
-        </div>
 
-        <div class="input-area">
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-box">
 
-            <div class="input-box">
+      <input
+        id="messageInput"
+        type="text"
+        autocomplete="off"
+        placeholder="Message ChilChat..."
+      >
 
-                <textarea
-                    id="messageInput"
-                    placeholder="Message ChilChat..."
-                    rows="1"
-                    onkeydown="handleKey(event)"
-                ></textarea>
+      <button id="sendButton" type="button">
+        ↑
+      </button>
 
-                <button
-                    class="send"
-                    id="sendButton"
-                    onclick="sendMessage()"
-                >
-                    ↑
-                </button>
+    </div>
+  </div>
 
-            </div>
-
-            <div class="disclaimer">
-                ChilChat can make mistakes. Check important information.
-            </div>
-
-        </div>
-
-    </main>
 </div>
+
 
 <script>
 
-let chats = [];
-let currentChat = [];
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("messageInput");
+  const sendButton = document.getElementById("sendButton");
+  const empty = document.getElementById("empty");
+  const statusText = document.getElementById("status");
 
-const chatArea = document.getElementById("chatArea");
-const input = document.getElementById("messageInput");
-const historyList = document.getElementById("historyList");
-const sendButton = document.getElementById("sendButton");
+  let history = [];
+  let sending = false;
 
 
-/* =========================
-   SEND MESSAGE
-========================= */
+  // Add message
+  function addMessage(text, role) {
 
-async function sendMessage(){
+    if (empty) {
+      empty.style.display = "none";
+    }
 
-    const text = input.value.trim();
+    const row = document.createElement("div");
+    row.className = "message-row " + role;
 
-    if(!text) return;
+    const avatar = document.createElement("div");
+    avatar.className =
+      "avatar " +
+      (role === "user" ? "user-avatar" : "bot-avatar");
 
-    document.getElementById("welcome").style.display = "none";
+    avatar.textContent =
+      role === "user" ? "U" : "C";
 
-    addMessage("user", text);
 
-    currentChat.push({
-        role:"user",
-        text:text
-    });
+    const bubble = document.createElement("div");
+    bubble.className =
+      "bubble " +
+      (role === "user" ? "user-bubble" : "bot-bubble");
+
+    bubble.textContent = text;
+
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+
+    chat.appendChild(row);
+
+    chat.scrollTop = chat.scrollHeight;
+
+    return row;
+  }
+
+
+  // Send message
+  async function sendMessage() {
+
+    if (sending) return;
+
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    sending = true;
+    sendButton.disabled = true;
+    input.disabled = true;
+
+    addMessage(message, "user");
 
     input.value = "";
 
-    showTyping();
+    const loading = addMessage(
+      "Thinking... 🤔",
+      "bot"
+    );
 
-    sendButton.disabled = true;
-
-    try{
-
-        const reply = await generateReply(text);
-
-        removeTyping();
-
-        addMessage("bot", reply);
-
-        currentChat.push({
-            role:"bot",
-            text:reply
-        });
-
-        saveChat(text);
-
-    }catch(error){
-
-        console.error(error);
-
-        removeTyping();
-
-        addMessage(
-            "bot",
-            "Sorry 😕 ChilChat abhi AI server se connect nahi ho pa raha."
-        );
-
-    }
-
-    sendButton.disabled = false;
-}
+    statusText.textContent = "Thinking...";
 
 
-/* =========================
-   REAL AI API
-========================= */
+    try {
 
-async function generateReply(text){
+      const response = await fetch("/api/chat", {
 
-    const response = await fetch("/api/chat", {
+        method: "POST",
 
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+          "Content-Type": "application/json"
         },
 
-        body:JSON.stringify({
+        body: JSON.stringify({
 
-            message:text,
+          message: message,
 
-            history:currentChat
+          history: history
 
         })
 
-    });
+      });
 
-    let data;
 
-    try{
+      let data;
 
+      try {
         data = await response.json();
+      } catch {
+        throw new Error(
+          "Server ne valid response nahi diya."
+        );
+      }
 
-    }catch(error){
 
-        throw new Error("Invalid server response");
+      loading.remove();
 
-    }
 
-    if(!response.ok){
+      if (!response.ok) {
 
         throw new Error(
-            data.error || "API request failed"
+          data?.error ||
+          "AI server error."
         );
 
-    }
-
-    if(!data.reply){
-
-        throw new Error("AI reply missing");
-
-    }
-
-    return data.reply;
-}
+      }
 
 
-/* =========================
-   ADD MESSAGE
-========================= */
-
-function addMessage(type,text){
-
-    const message = document.createElement("div");
-
-    message.className =
-        "message " + type;
-
-    const avatar = document.createElement("div");
-
-    avatar.className = "avatar";
-
-    avatar.textContent =
-        type === "user" ? "U" : "C";
-
-    const content = document.createElement("div");
-
-    content.className =
-        "message-content";
-
-    content.innerHTML =
-        escapeHTML(text);
-
-    message.appendChild(avatar);
-
-    message.appendChild(content);
-
-    chatArea.appendChild(message);
-
-    chatArea.scrollTop =
-        chatArea.scrollHeight;
-}
+      const reply =
+        data?.reply?.trim();
 
 
-/* =========================
-   TYPING
-========================= */
+      if (!reply) {
 
-function showTyping(){
+        throw new Error(
+          "AI ne empty response diya."
+        );
 
-    removeTyping();
-
-    const message =
-        document.createElement("div");
-
-    message.id = "typing";
-
-    message.className =
-        "message bot";
-
-    message.innerHTML = `
-        <div class="avatar">C</div>
-        <div class="message-content typing">
-            ChilChat is thinking...
-        </div>
-    `;
-
-    chatArea.appendChild(message);
-
-    chatArea.scrollTop =
-        chatArea.scrollHeight;
-}
+      }
 
 
-function removeTyping(){
-
-    const typing =
-        document.getElementById("typing");
-
-    if(typing){
-
-        typing.remove();
-
-    }
-}
+      addMessage(reply, "bot");
 
 
-/* =========================
-   NEW CHAT
-========================= */
+      history.push({
+        role: "user",
+        text: message
+      });
 
-function newChat(){
 
-    if(currentChat.length > 0){
+      history.push({
+        role: "bot",
+        text: reply
+      });
 
-        chats.push([...currentChat]);
+
+      // Keep history small
+      if (history.length > 20) {
+        history =
+          history.slice(-20);
+      }
+
+
+      statusText.textContent =
+        "AI Online";
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      loading.remove();
+
+      addMessage(
+        "Sorry 😕 AI server se connection nahi ho pa raha.\n\nError: " +
+        error.message,
+        "bot"
+      );
+
+      statusText.textContent =
+        "Connection Error";
 
     }
 
-    currentChat = [];
 
-    chatArea.innerHTML = `
-        <div class="welcome" id="welcome">
-            <h1>✨ ChilChat</h1>
-            <p>How can I help you today?</p>
-        </div>
-    `;
-
-    updateHistory();
+    sending = false;
+    sendButton.disabled = false;
+    input.disabled = false;
 
     input.focus();
-}
+
+  }
 
 
-/* =========================
-   SAVE CHAT
-========================= */
-
-function saveChat(firstMessage){
-
-    if(
-        !historyList ||
-        !firstMessage
-    ) return;
-
-    updateHistory();
-
-}
+  // Button
+  sendButton.addEventListener(
+    "click",
+    sendMessage
+  );
 
 
-/* =========================
-   HISTORY
-========================= */
+  // Enter
+  input.addEventListener(
+    "keydown",
+    function(event) {
 
-function updateHistory(){
-
-    historyList.innerHTML = "";
-
-    chats.forEach((chat,index)=>{
-
-        if(!chat.length) return;
-
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "history-item";
-
-        item.textContent =
-            chat[0]?.text || "New chat";
-
-        item.onclick = function(){
-
-            loadChat(index);
-
-        };
-
-        historyList.appendChild(item);
-
-    });
-
-}
-
-
-/* =========================
-   LOAD CHAT
-========================= */
-
-function loadChat(index){
-
-    const chat = chats[index];
-
-    if(!chat) return;
-
-    currentChat = [...chat];
-
-    chatArea.innerHTML = "";
-
-    currentChat.forEach(message=>{
-
-        const type =
-            message.role === "user"
-            ? "user"
-            : "bot";
-
-        addMessage(
-            type,
-            message.text
-        );
-
-    });
-
-    toggleMenu();
-
-}
-
-
-/* =========================
-   KEYBOARD
-========================= */
-
-function handleKey(event){
-
-    if(
+      if (
         event.key === "Enter" &&
         !event.shiftKey
-    ){
+      ) {
 
         event.preventDefault();
 
         sendMessage();
 
+      }
+
     }
-
-}
-
-
-/* =========================
-   MOBILE MENU
-========================= */
-
-function toggleMenu(){
-
-    const sidebar =
-        document.getElementById("sidebar");
-
-    sidebar.classList.toggle("open");
-
-}
+  );
 
 
-/* =========================
-   SECURITY
-========================= */
-
-function escapeHTML(text){
-
-    const div =
-        document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
-
-}
+  input.focus();
 
 </script>
 
