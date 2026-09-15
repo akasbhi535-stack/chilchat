@@ -13,14 +13,12 @@
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #ffffff;
-    color: #222;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
     height: 100vh;
     overflow: hidden;
 }
 
-/* APP */
 .app {
     display: flex;
     height: 100vh;
@@ -28,82 +26,55 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-    width: 270px;
-    background: #f7f7f8;
-    border-right: 1px solid #ddd;
+    width: 260px;
+    background: #111827;
+    color: white;
     display: flex;
     flex-direction: column;
-    padding: 15px;
+    padding: 18px;
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: bold;
     margin-bottom: 20px;
-    padding: 8px;
 }
 
 .new-chat {
-    border: 1px solid #ccc;
-    background: white;
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 13px;
     border-radius: 10px;
-    padding: 12px;
     cursor: pointer;
     font-size: 15px;
     margin-bottom: 20px;
 }
 
 .new-chat:hover {
-    background: #eee;
-}
-
-.history {
-    flex: 1;
-    overflow-y: auto;
+    opacity: .9;
 }
 
 .history-title {
-    font-size: 12px;
-    color: #777;
-    margin: 10px 8px;
+    font-size: 13px;
+    color: #9ca3af;
+    margin-bottom: 10px;
 }
 
-.chat-item {
-    padding: 11px;
+.history-list {
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px;
     border-radius: 8px;
     cursor: pointer;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 5px;
+    font-size: 14px;
 }
 
-.chat-item:hover {
-    background: #e8e8e8;
-}
-
-.bottom {
-    border-top: 1px solid #ddd;
-    padding-top: 12px;
-}
-
-.profile {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #111;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
+.history-item:hover {
+    background: #1f2937;
 }
 
 /* MAIN */
@@ -114,159 +85,169 @@ body {
     min-width: 0;
 }
 
-.topbar {
+.header {
     height: 60px;
-    border-bottom: 1px solid #ddd;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     padding: 0 20px;
-    justify-content: space-between;
-}
-
-.brand {
+    font-size: 19px;
     font-weight: bold;
-    font-size: 18px;
 }
 
-.menu-btn {
-    display: none;
-    border: none;
-    background: transparent;
-    font-size: 25px;
-    cursor: pointer;
-}
-
-/* CHAT */
 .chat-area {
     flex: 1;
     overflow-y: auto;
-    padding: 30px 15%;
+    padding: 25px;
 }
 
 .welcome {
-    max-width: 700px;
-    margin: 100px auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
 
-.welcome h1 {
+.welcome-box h1 {
     font-size: 35px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
-.welcome p {
-    color: #777;
+.welcome-box p {
+    color: #6b7280;
+    font-size: 16px;
 }
 
-/* MESSAGES */
 .message {
     display: flex;
-    margin-bottom: 25px;
-    gap: 12px;
-    max-width: 850px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 18px;
 }
 
 .message.user {
     justify-content: flex-end;
 }
 
-.message.user .bubble {
-    background: #f1f1f1;
-    border-radius: 18px;
+.message.bot {
+    justify-content: flex-start;
 }
 
-.message.bot .bubble {
-    background: transparent;
-}
-
-.message-avatar {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.bot-avatar {
-    background: #111;
-    color: white;
-}
-
-.user-avatar {
-    background: #ddd;
-}
-
-.bubble {
-    padding: 12px 16px;
-    line-height: 1.6;
+.message-content {
     max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
     word-wrap: break-word;
 }
 
+.message.user .message-content {
+    background: #2563eb;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.bot .message-content {
+    background: white;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 4px;
+}
+
+/* TYPING */
+.typing {
+    display: flex;
+    gap: 4px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 12px 15px;
+    border-radius: 15px;
+    width: fit-content;
+}
+
+.typing span {
+    width: 7px;
+    height: 7px;
+    background: #777;
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes blink {
+    0%, 80%, 100% {
+        opacity: .3;
+    }
+    40% {
+        opacity: 1;
+    }
+}
+
 /* INPUT */
-.input-section {
-    padding: 15px 15%;
+.input-area {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
 }
 
 .input-box {
-    max-width: 850px;
-    margin: auto;
-    border: 1px solid #ccc;
-    border-radius: 16px;
     display: flex;
-    align-items: center;
-    padding: 8px 10px;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    gap: 10px;
+    max-width: 900px;
+    margin: auto;
 }
 
-.input-box textarea {
+#messageInput {
     flex: 1;
-    resize: none;
-    border: none;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
     outline: none;
-    font-size: 16px;
-    padding: 10px;
-    height: 45px;
-    font-family: inherit;
+    font-size: 15px;
+}
+
+#messageInput:focus {
+    border-color: #2563eb;
 }
 
 .send-btn {
-    width: 42px;
-    height: 42px;
     border: none;
-    border-radius: 50%;
-    background: #111;
+    background: #2563eb;
     color: white;
+    padding: 0 22px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .send-btn:hover {
-    background: #333;
-}
-
-.footer {
-    text-align: center;
-    font-size: 11px;
-    color: #999;
-    margin-top: 7px;
+    opacity: .9;
 }
 
 /* MOBILE */
-@media (max-width: 700px) {
+.mobile-menu {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+}
 
+@media (max-width: 700px) {
     .sidebar {
         position: fixed;
-        left: -280px;
+        left: -270px;
         top: 0;
-        height: 100vh;
+        bottom: 0;
         z-index: 10;
         transition: .3s;
     }
@@ -275,28 +256,24 @@ body {
         left: 0;
     }
 
-    .menu-btn {
+    .mobile-menu {
         display: block;
     }
 
     .chat-area {
-        padding: 20px 12px;
+        padding: 15px;
     }
 
-    .input-section {
-        padding: 10px;
+    .message-content {
+        max-width: 88%;
     }
 
-    .welcome {
-        margin: 80px auto;
-    }
-
-    .welcome h1 {
+    .welcome-box h1 {
         font-size: 28px;
     }
 
-    .bubble {
-        max-width: 85%;
+    .input-area {
+        padding: 10px;
     }
 }
 </style>
@@ -314,102 +291,62 @@ body {
         </div>
 
         <button class="new-chat" onclick="newChat()">
-            ＋ New chat
+            + New Chat
         </button>
 
-        <div class="history">
-            <div class="history-title">CHAT HISTORY</div>
-
-            <div id="historyList"></div>
+        <div class="history-title">
+            CHAT HISTORY
         </div>
 
-        <div class="bottom">
-            <div class="profile">
-                <div class="avatar">U</div>
-                <div>
-                    <b>User</b><br>
-                    <small>Free Plan</small>
-                </div>
-            </div>
-        </div>
+        <div class="history-list" id="historyList"></div>
 
     </aside>
-
 
     <!-- MAIN -->
     <main class="main">
 
-        <header class="topbar">
-
-            <button class="menu-btn" onclick="toggleMenu()">
-                ☰
-            </button>
-
-            <div class="brand">
-                ChilChat
-            </div>
-
-            <div>
-                <button onclick="newChat()" style="
-                    border:none;
-                    background:none;
-                    cursor:pointer;
-                    font-size:18px;
-                ">
-                    ✨
-                </button>
-            </div>
-
+        <header class="header">
+            <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+            ChilChat
         </header>
 
-
-        <!-- CHAT AREA -->
         <section class="chat-area" id="chatArea">
 
             <div class="welcome" id="welcome">
 
-                <h1>How can I help you?</h1>
-
-                <p>
-                    Welcome to ChilChat — your AI chat assistant.
-                </p>
+                <div class="welcome-box">
+                    <h1>👋 Welcome to ChilChat</h1>
+                    <p>Ask me anything. I'm here to help.</p>
+                </div>
 
             </div>
 
         </section>
 
-
-        <!-- INPUT -->
-        <section class="input-section">
+        <div class="input-area">
 
             <div class="input-box">
 
-                <textarea
+                <input
+                    type="text"
                     id="messageInput"
                     placeholder="Message ChilChat..."
-                    onkeydown="handleKey(event)"
-                ></textarea>
+                    autocomplete="off"
+                >
 
                 <button class="send-btn" onclick="sendMessage()">
-                    ↑
+                    Send
                 </button>
 
             </div>
 
-            <div class="footer">
-                ChilChat can make mistakes. Check important information.
-            </div>
-
-        </section>
+        </div>
 
     </main>
 
 </div>
 
-
 <script>
-
-/* VARIABLES */
 
 let chats = [];
 let currentChat = [];
@@ -421,7 +358,7 @@ const historyList = document.getElementById("historyList");
 
 /* SEND MESSAGE */
 
-function sendMessage() {
+async function sendMessage() {
 
     const text = input.value.trim();
 
@@ -440,11 +377,11 @@ function sendMessage() {
 
     showTyping();
 
-    setTimeout(() => {
+    try {
+
+        const reply = await generateReply(text);
 
         removeTyping();
-
-        const reply = generateReply(text);
 
         addMessage("bot", reply);
 
@@ -455,7 +392,74 @@ function sendMessage() {
 
         saveChat(text);
 
-    }, 800);
+    } catch (error) {
+
+        console.error(error);
+
+        removeTyping();
+
+        const errorMessage =
+            "Sorry 😕 ChilChat abhi AI server se connect nahi ho pa raha.";
+
+        addMessage("bot", errorMessage);
+
+        currentChat.push({
+            role: "bot",
+            text: errorMessage
+        });
+
+    }
+
+}
+
+
+/* REAL AI API */
+
+async function generateReply(text) {
+
+    try {
+
+        const response = await fetch("/api/chat", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                message: text,
+
+                history: currentChat
+
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error || "API request failed"
+            );
+
+        }
+
+
+        return data.reply || "AI ne koi reply nahi diya.";
+
+    } catch (error) {
+
+        console.error("ChilChat API Error:", error);
+
+        throw error;
+
+    }
+
 }
 
 
@@ -467,78 +471,16 @@ function addMessage(type, text) {
 
     message.className = "message " + type;
 
-    if (type === "user") {
-
-        message.innerHTML = `
-            <div class="bubble">
-                ${escapeHTML(text)}
-            </div>
-
-            <div class="message-avatar user-avatar">
-                U
-            </div>
-        `;
-
-    } else {
-
-        message.innerHTML = `
-            <div class="message-avatar bot-avatar">
-                C
-            </div>
-
-            <div class="bubble">
-                ${escapeHTML(text)}
-            </div>
-        `;
-
-    }
+    message.innerHTML = `
+        <div class="message-content">
+            ${escapeHTML(text)}
+        </div>
+    `;
 
     chatArea.appendChild(message);
 
     chatArea.scrollTop = chatArea.scrollHeight;
-}
 
-
-/* DEMO AI RESPONSE */
-
-function generateReply(text) {
-
-    const lower = text.toLowerCase();
-
-    if (lower.includes("hello") ||
-        lower.includes("hi") ||
-        lower.includes("hey")) {
-
-        return "Hello! 👋 Main ChilChat hoon. Batao, main tumhari kya help kar sakta hoon?";
-
-    }
-
-    if (lower.includes("who are you") ||
-        lower.includes("tum kaun")) {
-
-        return "Main ChilChat ka AI assistant hoon. 🤖";
-
-    }
-
-    if (lower.includes("website")) {
-
-        return "Bilkul! Main tumhe website design, HTML, CSS aur JavaScript mein help kar sakta hoon.";
-
-    }
-
-    if (lower.includes("bitcoin")) {
-
-        return "Bitcoin ek decentralized cryptocurrency hai. Agar chaho to main Bitcoin ke basics simple Hinglish mein explain kar sakta hoon.";
-
-    }
-
-    if (lower.includes("thank")) {
-
-        return "You're welcome! 😊";
-
-    }
-
-    return "Samajh gaya. 👍 Ye abhi ChilChat ka demo AI response hai. Real AI answers ke liye backend/API connect karna hoga.";
 }
 
 
@@ -546,21 +488,26 @@ function generateReply(text) {
 
 function showTyping() {
 
+    removeTyping();
+
     const typing = document.createElement("div");
 
     typing.className = "message bot";
+
     typing.id = "typing";
 
     typing.innerHTML = `
-        <div class="message-avatar bot-avatar">C</div>
-        <div class="bubble">
-            <span>● ● ●</span>
+        <div class="typing">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     `;
 
     chatArea.appendChild(typing);
 
     chatArea.scrollTop = chatArea.scrollHeight;
+
 }
 
 
@@ -571,6 +518,7 @@ function removeTyping() {
     if (typing) {
         typing.remove();
     }
+
 }
 
 
@@ -583,40 +531,38 @@ function newChat() {
     chatArea.innerHTML = `
         <div class="welcome" id="welcome">
 
-            <h1>How can I help you?</h1>
-
-            <p>
-                Welcome to ChilChat — your AI chat assistant.
-            </p>
+            <div class="welcome-box">
+                <h1>👋 Welcome to ChilChat</h1>
+                <p>Ask me anything. I'm here to help.</p>
+            </div>
 
         </div>
     `;
 
     input.value = "";
 
-    closeMenu();
+    toggleMenu(false);
+
 }
 
 
 /* SAVE CHAT */
 
-function saveChat(firstMessage) {
+function saveChat(text) {
 
-    if (currentChat.length === 1) {
+    if (!text) return;
 
-        const title =
-            firstMessage.length > 30
-            ? firstMessage.substring(0,30) + "..."
-            : firstMessage;
+    chats.push({
+        title: text.substring(0, 35),
+        messages: [...currentChat]
+    });
 
-        chats.unshift(title);
+    updateHistory();
 
-        updateHistory();
-    }
 }
 
 
-/* HISTORY */
+/* UPDATE HISTORY */
 
 function updateHistory() {
 
@@ -626,17 +572,46 @@ function updateHistory() {
 
         const item = document.createElement("div");
 
-        item.className = "chat-item";
+        item.className = "history-item";
 
-        item.innerHTML = "💬 " + escapeHTML(chat);
+        item.textContent = chat.title;
 
-        item.onclick = function() {
-            alert("Chat history demo: " + chat);
+        item.onclick = function () {
+
+            loadChat(index);
+
         };
 
         historyList.appendChild(item);
 
     });
+
+}
+
+
+/* LOAD CHAT */
+
+function loadChat(index) {
+
+    const chat = chats[index];
+
+    if (!chat) return;
+
+    currentChat = [...chat.messages];
+
+    chatArea.innerHTML = "";
+
+    currentChat.forEach(message => {
+
+        addMessage(
+            message.role === "user" ? "user" : "bot",
+            message.text
+        );
+
+    });
+
+    toggleMenu(false);
+
 }
 
 
@@ -644,34 +619,41 @@ function updateHistory() {
 
 function handleKey(event) {
 
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter") {
 
         event.preventDefault();
 
         sendMessage();
+
     }
+
 }
 
 
 /* MOBILE MENU */
 
-function toggleMenu() {
+function toggleMenu(force) {
 
-    document
-        .getElementById("sidebar")
-        .classList.toggle("open");
+    const sidebar = document.getElementById("sidebar");
+
+    if (typeof force === "boolean") {
+
+        if (force) {
+            sidebar.classList.add("open");
+        } else {
+            sidebar.classList.remove("open");
+        }
+
+        return;
+
+    }
+
+    sidebar.classList.toggle("open");
+
 }
 
 
-function closeMenu() {
-
-    document
-        .getElementById("sidebar")
-        .classList.remove("open");
-}
-
-
-/* SECURITY */
+/* ESCAPE HTML */
 
 function escapeHTML(text) {
 
@@ -680,7 +662,18 @@ function escapeHTML(text) {
     div.textContent = text;
 
     return div.innerHTML;
+
 }
+
+
+/* ENTER EVENT */
+
+input.addEventListener("keydown", handleKey);
+
+
+/* INITIAL */
+
+updateHistory();
 
 </script>
 
