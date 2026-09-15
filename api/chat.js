@@ -1,84 +1,30 @@
-module.exports = async function handler(req, res) {
-
+module.exports = async (req, res) => {
+  // Only allow POST
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed"
     });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-
-  if (!apiKey) {
-    return res.status(500).json({
-      error: "GEMINI_API_KEY is not configured."
-    });
-  }
-
   try {
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    let body = req.body || {};
-
-    if (typeof body === "string") {
-      body = JSON.parse(body);
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "GEMINI_API_KEY is not configured in Vercel."
+      });
     }
 
-    const message = body.message;
+    const { contents } = req.body || {};
 
-    const history =
-      Array.isArray(body.history)
-        ? body.history
-        : [];
-
-    if (
-      typeof message !== "string" ||
-      !message.trim()
-    ) {
+    if (!contents) {
       return res.status(400).json({
-        error: "Message is required."
+        error: "Message contents are missing."
       });
     }
-
-    const contents = [];
-
-    history.slice(-20).forEach(item => {
-
-      if (
-        !item ||
-        typeof item.text !== "string" ||
-        !item.text.trim()
-      ) {
-        return;
-      }
-
-      contents.push({
-        role:
-          item.role === "bot" ||
-          item.role === "model"
-            ? "model"
-            : "user",
-
-        parts: [
-          {
-            text: item.text.trim()
-          }
-        ]
-      });
-
-    });
-
-    contents.push({
-      role: "user",
-
-      parts: [
-        {
-          text: message.trim()
-        }
-      ]
-    });
-
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
       {
         method: "POST",
 
@@ -88,86 +34,48 @@ module.exports = async function handler(req, res) {
         },
 
         body: JSON.stringify({
-
           systemInstruction: {
             parts: [
               {
                 text:
-                  "You are ChilChat, a friendly and helpful AI assistant. " +
-                  "Answer clearly and accurately. " +
-                  "If the user speaks Hindi or Hinglish, reply in simple Hinglish. " +
-                  "Keep answers easy to understand."
+                  "You are ChilChat, a friendly and helpful AI assistant. Answer clearly and accurately. If the user speaks Hindi or Hinglish, reply in simple Hinglish. Keep answers easy to understand."
               }
             ]
           },
 
-          contents: contents
-
+          contents
         })
       }
     );
 
-
-    const data =
-      await response.json();
-
+    const data = await response.json();
 
     if (!response.ok) {
-
-      console.error(
-        "Gemini error:",
-        data
-      );
-
-      return res.status(500).json({
+      return res.status(response.status).json({
         error:
           data?.error?.message ||
           "Gemini API request failed."
       });
     }
 
-
-    const parts =
-      data?.candidates?.[0]?.content?.parts;
-
-
     const reply =
-      Array.isArray(parts)
-        ? parts
-            .map(p => p.text || "")
-            .join("")
-            .trim()
-        : "";
-
+      data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!reply) {
-
       return res.status(500).json({
-        error:
-          "Gemini returned an empty response."
+        error: "Gemini ne koi text response nahi diya."
       });
-
     }
 
-
     return res.status(200).json({
-      reply: reply
+      reply
     });
-
 
   } catch (error) {
-
-    console.error(
-      "ChilChat error:",
-      error
-    );
+    console.error("ChilChat API Error:", error);
 
     return res.status(500).json({
-      error:
-        "Server error: " +
-        error.message
+      error: "Server error: " + error.message
     });
-
   }
-
 };
